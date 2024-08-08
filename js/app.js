@@ -13,6 +13,9 @@
 		computed: {
 			remaining() {
 				return this.todos.filter(todo => !todo.completed).length;
+			},
+			allDone() {
+				return this.remaining === 0;
 			}
 		},
 		methods: {
