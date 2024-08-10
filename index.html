@@ -28,9 +28,9 @@
 						<div class="view">
 							<input class="toggle" type="checkbox" v-model="todo.completed"> <!-- checkbox中的 value属性控制复选框的选中与否，而 v-model绑定的是value 属性，因此可以通过v-model来控制复选框 -->
 							<label>{{ todo.title }}</label>
-							<button class="destroy"></button>
+							<button class="destroy" @click="removeTodo(todo)"></button>
 						</div>
-						<input class="edit" value="Create a TodoMVC template">
+						<input class="edit" v-model="todo.title">
 					</li>
 				</ul>
 			</section>
@@ -51,7 +51,7 @@
 					</li>
 				</ul>
 				<!-- Hidden if no completed items are left ↓ -->
-				<button class="clear-completed">Clear completed</button>
+				<button class="clear-completed" v-show="todos.length > remaining" @click="removeCompleted">Clear completed</button>
 			</footer>
 		</section>
 		<footer class="info">
