@@ -8,7 +8,8 @@
 				{id: 1, completed: true, title: '示例代办1'},
 				{id: 2, completed: false, title: '示例代办2'},
 				{id: 3, completed: true, title: '示例代办3'}
-			]
+			],
+			newTodo: ''
 		},
 		computed: {
 			remaining() {
@@ -26,6 +27,7 @@
 			}
 		},
 		methods: {
+			// 控制 item 显示单复数
 			pluralize(word) {
 				return word + (this.remaining === 1 ? "" : "s");
 			},
@@ -37,6 +39,17 @@
 			// 清除所有已完成代办
 			removeCompleted(){
 				this.todos = this.todos.filter( todo => !todo.completed);
+			},
+			// 添加新代办
+			addTodo(){
+				var index = Math.floor(Math.random()*9999);
+				// this.newTodo = this.newTodo.trim();
+				this.todos.push({id: index, title: this.newTodo.trim(), completed: false});
+				this.newTodo = '';
+			},
+			// 清空输入代办框
+			clearInput() {
+				this.newTodo = '';
 			}
 		}
 	});
