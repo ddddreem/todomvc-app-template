@@ -1,6 +1,18 @@
 (function (window) {
 	'use strict';
 
+	let filters = {
+		all(todos){
+			return todos;
+		},
+		active(todos){
+			return todos.filter(todo => !todo.completed);
+		},
+		completed(todos){
+			return todos.filter(todo => todo.completed);
+		}
+	}
+
 	new Vue({
 		el: '#app',
 		data: {
@@ -13,11 +25,13 @@
 			// 当前正在编辑的todo信息
 			editingTodo: null,
 			// 编辑前的title 信息
-			titleBeforeEditing: ''
+			titleBeforeEditing: '',
+			// 当前筛选的规则
+			sortStrategy: 'all'
 		},
 		computed: {
 			remaining() {
-				return this.todos.filter(todo => !todo.completed).length;
+				return filters.active(this.todos).length;
 			},
 			allDone: {
 				get() {
@@ -28,6 +42,10 @@
 						todo.completed = value;
 					});
 				}
+			},
+			// 返回根据不同筛选策略得到的代办集合
+			filterTodo(){
+				return filters[this.sortStrategy](this.todos);
 			}
 		},
 		methods: {
@@ -42,7 +60,7 @@
 			},
 			// 清除所有已完成代办
 			removeCompleted(){
-				this.todos = this.todos.filter( todo => !todo.completed);
+				this.todos = filters.active(this.todos);
 			},
 			// 添加新代办
 			addTodo(){
@@ -66,15 +84,20 @@
 				this.editingTodo = null;
 				this.titleBeforeEditing = '';
 			},
-			// 保存代办修改
+			// 保存代办修改，回车也会触发失去焦点事件，需要避免重复操作
 			saveEdit(todo){
+				if(!this.editingTodo) return;
 				todo.title = todo.title.trim();
-				todo.completed = this.titleBeforeEditing === todo.title;
+				if(todo.completed && todo.title !== this.titleBeforeEditing) todo.completed = !todo.completed;
 				this.editingTodo = null;
 				this.titleBeforeEditing = '';
 				if(!todo.title){
 					this.removeTodo(todo);
 				}
+			},
+			// 更改筛选策略
+			changeSortStrategy(strategy){
+				this.sortStrategy = strategy;
 			}
 		},
 		directives: {
