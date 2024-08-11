@@ -9,7 +9,11 @@
 				{id: 2, completed: false, title: '示例代办2'},
 				{id: 3, completed: true, title: '示例代办3'}
 			],
-			newTodo: ''
+			newTodo: '',
+			// 当前正在编辑的todo信息
+			editingTodo: null,
+			// 编辑前的title 信息
+			titleBeforeEditing: ''
 		},
 		computed: {
 			remaining() {
@@ -50,6 +54,34 @@
 			// 清空输入代办框
 			clearInput() {
 				this.newTodo = '';
+			},
+			// 保存当前编辑的li
+			editTodo(todo){
+				this.editingTodo = todo;
+				this.titleBeforeEditing = todo.title;
+			},
+			// 取消代办编辑
+			cancelEdit(todo){
+				todo.title = this.titleBeforeEditing;
+				this.editingTodo = null;
+				this.titleBeforeEditing = '';
+			},
+			// 保存代办修改
+			saveEdit(todo){
+				todo.title = todo.title.trim();
+				todo.completed = this.titleBeforeEditing === todo.title;
+				this.editingTodo = null;
+				this.titleBeforeEditing = '';
+				if(!todo.title){
+					this.removeTodo(todo);
+				}
+			}
+		},
+		directives: {
+			'todo-focus' (el, binding){
+				if(binding.value){
+					el.focus();
+				}
 			}
 		}
 	});
