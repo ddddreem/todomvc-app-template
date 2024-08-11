@@ -1,6 +1,7 @@
 (function (window) {
 	'use strict';
 
+	// 不同状态的过滤函数
 	let filters = {
 		all(todos){
 			return todos;
@@ -13,14 +14,21 @@
 		}
 	}
 
+	const TODOS_KEY = 'todos-vue';
+
+	let todoStorage = {
+		get(){
+			return JSON.parse(localStorage.getItem(TODOS_KEY)) || [];
+		},
+		set(todos){
+			localStorage.setItem(TODOS_KEY, JSON.stringify(todos));
+		}
+	}
+
 	new Vue({
 		el: '#app',
 		data: {
-			todos: [
-				{id: 1, completed: true, title: '示例代办1'},
-				{id: 2, completed: false, title: '示例代办2'},
-				{id: 3, completed: true, title: '示例代办3'}
-			],
+			todos: todoStorage.get(),
 			newTodo: '',
 			// 当前正在编辑的todo信息
 			editingTodo: null,
@@ -28,6 +36,12 @@
 			titleBeforeEditing: '',
 			// 当前筛选的规则
 			sortStrategy: 'all'
+		},
+		watch: {
+			todos: {
+				deep: true,
+				handler: todoStorage.set
+			}
 		},
 		computed: {
 			remaining() {
